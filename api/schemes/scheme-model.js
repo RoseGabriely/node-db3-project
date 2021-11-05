@@ -41,7 +41,7 @@ async function findById(scheme_id) {
 }
 
 async function findSteps(scheme_id) {
-  const rows = db("steps as st")
+  const rows = await db("steps as st")
     .leftJoin("schemes as sc", "st.scheme_id", "sc.scheme_id")
     .select("st.step_id", "st.step_number", "st.instructions", "sc.scheme_name")
     .where("st.scheme_id", scheme_id)
@@ -50,11 +50,16 @@ async function findSteps(scheme_id) {
   return rows;
 }
 
-async function add(scheme) {
+function add(scheme) {
   // EXERCISE D
   /*
     1D- This function creates a new scheme and resolves to _the newly created scheme_.
   */
+  return db("schemes")
+    .insert(scheme)
+    .then((id) => {
+      return db("schemes").where("scheme_id", id).first();
+    });
 }
 
 async function addStep(scheme_id, step) {
